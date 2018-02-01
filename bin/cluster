@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+/**
+ * Created by linyang on 17/3/3.
+ */
+var cluster = require('cluster');
+var os = require('os');
+
+cluster.on('listening', function () {
+    console.log('one');
+});
+cluster.on('fork', function (worker) {
+    console.log(worker.id);
+});
+
+if (cluster.isMaster) {
+    var cpus = os.cpus().length;
+    for (var i = 0; i < cpus; i++) {
+        cluster.fork();
+    }
+} else if (cluster.isWorker) {
+    require('./www');
+}

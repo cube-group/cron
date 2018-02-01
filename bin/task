@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+/**
+ * 任务机程序.
+ */
+var trace = require('../libs/trace');
+var model = require('../models/task');
+var taskServer = require('../service/task/server');
+
+//获取当前任务机信息.
+model.getTaskServerInfo(function (err) {
+    if (err) {
+        trace.error(err, 'task-program start error.');
+        process.exit();
+    }
+
+    //start task server.
+    taskServer.start();
+
+    //start http server.
+    require('./www');
+});
