@@ -17,8 +17,8 @@ var information = {count: 0, success: 0, error: 0};
  * @param info array
  * @param callback function
  */
-exports.start = (info, callback) => {
-    model.getProxyListFromServer(info.id, (err, result)=> {
+exports.start = function (info, callback) {
+    model.getProxyListFromServer(info.id, function (err, result) {
         if (err) {
             callback(err, err);
         } else {
@@ -49,7 +49,7 @@ exports.stop = function () {
  * 获取信息
  * @return object
  */
-exports.getInfo = () => {
+exports.getInfo = function () {
     return information;
 };
 
@@ -61,19 +61,19 @@ exports.getInfo = () => {
  * @param toPort
  */
 function initServer(port, toHost, toPort) {
-    server = net.createServer((client)=> {
+    server = net.createServer(function (client) {
         information.count++;
 
-        client.on('end', () => {
+        client.on('end', function () {
             connect.end();
         });
 
-        var connect = net.createConnection({host: toHost, port: toPort}, (err)=> {
+        var connect = net.createConnection({host: toHost, port: toPort}, function (err) {
         });
-        connect.on('error', (err)=> {
+        connect.on('error', function (err) {
             information.error++;
         });
-        connect.on('end', ()=> {
+        connect.on('end', function () {
             information.success++;
         });
 
@@ -86,7 +86,7 @@ function initServer(port, toHost, toPort) {
         // });
     });
 
-    server.listen(port, (err) => {
+    server.listen(port, function (err) {
         if (err) {
             trace.log('proxy server error', err);
             process.exit();

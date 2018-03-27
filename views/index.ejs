@@ -1,11 +1,387 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<html lang="en">
+<head>
+    <title>Dashboard | Klorofil - Free Bootstrap Dashboard Template</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- VENDOR CSS -->
+    <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/vendor/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/vendor/linearicons/style.css">
+    <link rel="stylesheet" href="assets/vendor/chartist/css/chartist-custom.css">
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="assets/css/demo.css">
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+    <!-- ICONS -->
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
+</head>
+
+<body>
+<!-- WRAPPER -->
+<div id="wrapper">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="brand">
+            <a href="index.html"></a>
+        </div>
+        <div class="container-fluid">
+
+
+            <div id="navbar-menu">
+                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
+                                    class="lnr lnr-question-circle"></i> <span>Help</span> <i
+                                    class="icon-submenu lnr lnr-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">How To Use</a></li>
+                            <li><a href="#">How To Setup the code</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- END NAVBAR -->
+    <!-- LEFT SIDEBAR -->
+    <div id="sidebar-nav" class="sidebar">
+        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 95%;">
+            <div class="sidebar-scroll" style="overflow: hidden; width: auto; height: 95%;">
+                <nav>
+                    <ul class="nav">
+                        <li><a href="#" class="active"><i class="lnr lnr-code"></i><span>127.0.0.1</span></a>
+                        </li>
+                        <li><a href="#" class=""><i class="lnr lnr-code"></i><span>127.0.0.1</span></a>
+                        </li>
+                        <li><a href="#" class=""><i class="lnr lnr-code"></i><span>127.0.0.1</span></a>
+                        </li>
+                        <li><a href="#" class=""><i class="lnr lnr-code"></i><span>127.0.0.1</span></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="slimScrollBar"
+                 style="background: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 815px;"></div>
+            <div class="slimScrollRail"
+                 style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px;"></div>
+        </div>
+    </div>
+    <!-- END LEFT SIDEBAR -->
+    <!-- MAIN -->
+    <div class="main">
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container-fluid">
+                <!-- OVERVIEW -->
+                <div class="panel panel-headline">
+                    <div class="panel-heading">
+                        <h4 class="panel-title" style="color:#0b5b97;">Local Cron Overview</h4>
+                        <p class="panel-subtitle">Period: <%= period.dt %>(s) Started: <%= period.utc %></p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="metric">
+                                    <span class="icon"><i class="fa fa-eye"></i></span>
+                                    <p>
+                                        <span class="number"><%= info.address %></span>
+                                        <span class="title"><%= info.name %></span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric">
+                                    <span class="icon"><i class="fa fa-bar-chart"></i></span>
+                                    <p>
+                                        <span class="number"><%= cpu %>%</span>
+                                        <span class="title">Cpu Used</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric">
+                                    <span class="icon"><i class="fa fa-bar-chart"></i></span>
+                                    <p>
+                                        <span class="number"><%= mem %>%</span>
+                                        <span class="title">Memory Used</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric">
+                                    <span class="icon"><i class="fa fa-bar-chart"></i></span>
+                                    <p>
+                                        <span class="number"><%= status %>%</span>
+                                        <span class="title">Cron Success Percent</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div class="row">-->
+                        <!--<div class="col-md-9">-->
+                        <!--<div id="headline-chart" class="ct-chart">-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="col-md-3">-->
+                        <!--<div class="weekly-summary text-right">-->
+                        <!--<span class="number">2,315</span> <span class="percentage"><i-->
+                        <!--class="fa fa-caret-up text-success"></i> 12%</span>-->
+                        <!--<span class="info-label">Total Sales</span>-->
+                        <!--</div>-->
+                        <!--<div class="weekly-summary text-right">-->
+                        <!--<span class="number">$5,758</span> <span class="percentage"><i-->
+                        <!--class="fa fa-caret-up text-success"></i> 23%</span>-->
+                        <!--<span class="info-label">Monthly Income</span>-->
+                        <!--</div>-->
+                        <!--<div class="weekly-summary text-right">-->
+                        <!--<span class="number">$65,938</span> <span class="percentage"><i-->
+                        <!--class="fa fa-caret-down text-danger"></i> 8%</span>-->
+                        <!--<span class="info-label">Total Income</span>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- RECENT PURCHASES -->
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <span class="panel-title">Current Task-Engine Cron List(Total: 0)</span>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <a class="btn btn-primary" onclick="onTaskAdd()">Add</a>
+                                        <a class="btn btn-danger" onclick="onTaskRestartAll()">Restart</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body no-padding">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Task No.</th>
+                                        <th>Comment</th>
+                                        <th>Time</th>
+                                        <th>Value</th>
+                                        <th>UseTime</th>
+                                        <th>AverageTime</th>
+                                        <th>Error</th>
+                                        <th>Status</th>
+                                        <th>Options</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <% list.forEach(function(item){ %>
+                                    <tr>
+                                        <td>
+                                            <%= item.id %>
+                                        </td>
+                                        <td>
+                                            <%= item.comment %>
+                                        </td>
+                                        <td>
+                                            <%= item.time %>
+                                        </td>
+                                        <td>
+                                            <%= item.value %>
+                                        </td>
+                                        <td>
+                                            <%= item.useTime %>
+                                        </td>
+                                        <td>
+                                            <%= item.averageTime %>
+                                        </td>
+                                        <td>
+                                            <%= item.error %>
+                                        </td>
+                                        <td>
+                                            <%= item.status %>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm">edit</button>
+                                            <button class="btn btn-danger btn-sm">delete</button>
+                                            <button class="btn btn-sm">restart</button>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- END RECENT PURCHASES -->
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <!-- END MAIN CONTENT -->
+    </div>
+    <!-- END MAIN -->
+    <div class="clearfix"></div>
+    <footer>
+        <div class="container-fluid">
+            <p class="copyright">© 2018 <a href="#" target="_blank">Cube-group/cron</a>. All Rights Reserved. More</p>
+        </div>
+    </footer>
+</div>
+<!-- 编辑框（Modal） -->
+<div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="modal-edit-title">Task Edit</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form">
+                    <div class="form-group">
+                        <input class="form-control" placeholder="cron time" type="text" id="edit-input-time">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" placeholder="shell or url" type="text" id="edit-input-value">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" placeholder="comment" type="text" id="edit-input-comment">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" placeholder="alert mail group" type="text" id="edit-input-mail">
+                    </div>
+                    <select class="form-control" id="edit-select-type">
+                        <option value="0">Linux Shell</option>
+                        <option value="1">URL Get</option>
+                    </select>
+                    <br>
+                    <label class="fancy-checkbox">
+                        <input type="checkbox" class="form-control" id="edit-check-mail">
+                        <span>send mail when error</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Submit</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<!-- END WRAPPER -->
+<!-- Javascript -->
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="assets/vendor/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
+<script src="assets/vendor/chartist/js/chartist.min.js"></script>
+<script src="assets/scripts/klorofil-common.js"></script>
+<script>
+    $(function () {
+        var data, options;
+
+        // visits trend charts
+        data = {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            series: [{
+                name: 'series-real',
+                data: [200, 380, 350, 320, 410, 450, 570, 400, 555, 620, 750, 900],
+            }, {
+                name: 'series-projection',
+                data: [240, 350, 360, 380, 400, 450, 480, 523, 555, 600, 700, 800],
+            }]
+        };
+
+        options = {
+            fullWidth: true,
+            lineSmooth: false,
+            height: "270px",
+            low: 0,
+            high: 'auto',
+            series: {
+                'series-projection': {
+                    showArea: true,
+                    showPoint: false,
+                    showLine: false
+                },
+            },
+            axisX: {
+                showGrid: false,
+
+            },
+            axisY: {
+                showGrid: false,
+                onlyInteger: true,
+                offset: 0,
+            },
+            chartPadding: {
+                left: 20,
+                right: 20
+            }
+        };
+
+//        new Chartist.Line('#headline-chart', data, options);
+
+
+        // real-time pie chart
+        var sysLoad = $('#system-load').easyPieChart({
+            size: 130,
+            barColor: function (percent) {
+                return "rgb(" + Math.round(200 * percent / 100) + ", " + Math.round(200 * (1.1 - percent / 100)) + ", 0)";
+            },
+            trackColor: 'rgba(245, 245, 245, 0.8)',
+            scaleColor: false,
+            lineWidth: 5,
+            lineCap: "square",
+            animate: 800
+        });
+
+        var updateInterval = 3000; // in milliseconds
+
+        setInterval(function () {
+            var randomVal;
+            randomVal = getRandomInt(0, 100);
+
+            sysLoad.data('easyPieChart').update(randomVal);
+            sysLoad.find('.percent').text(randomVal);
+        }, updateInterval);
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    });
+
+    //添加任务
+    function onTaskAdd() {
+        $('#modal-edit').modal('show');
+    }
+
+    //编辑任务
+    function onTaskEdit() {
+        $('#modal-edit').modal('show');
+    }
+
+    //删除任务
+    function onTaskDel() {
+
+    }
+
+    //重启任务
+    function onTaskRestart() {
+
+    }
+
+    //重启所有任务
+    function onTaskRestartAll(){
+
+    }
+</script>
+
+
+</body>
 </html>

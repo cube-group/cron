@@ -8,7 +8,7 @@ var config = require('../conf/config');
 /**
  * Get port from environment and store in Express.
  */
-var port = normalizePort(process.env.PORT || config.PORT);
+var port = normalizePort(config.port);//process.env.PORT ||
 app.set('port', port);
 
 /**
@@ -59,7 +59,7 @@ function onError(error) {
         : 'Port ' + port;
 
     //记录http服务正在失败.
-    config.HTTP_SERVER_RUNNING = 0;
+    config.running = 0;
 
     // handle specific listen errors with friendly messages
     switch (error.code) {
@@ -82,7 +82,7 @@ function onError(error) {
 
 function onListening() {
     //记录http服务正在运行中.
-    config.HTTP_SERVER_RUNNING = 1;
+    config.running = 1;
 
     var addr = server.address();
     var bind = typeof addr === 'string'

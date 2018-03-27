@@ -1,21 +1,30 @@
 /**
+ * Created by linyang on 2018/3/27.
  * 任务机应用程序.
  */
-var config = require('../../conf/config');
-var trace = require('../../libs/trace');
-var model = require('../../models/task');
-var TaskClass = require('./core/task');
+let config = require('../../conf/config');
+let trace = require('../../libs/trace');
+let model = require('../../models/task');
+let Schedule = require('./schedule');
+let dateformat = require('dateformat');
 
 /**
  * 正在执行任务的schedule列表.
  * [Task,Task,...]
  */
-var tasks = null;
+let tasks = [];
+/**
+ * 启动相关时间
+ * @type {{start: number, utd: string}}
+ */
+let period = {start: 0, utc: ''};
 
 /**
  * 开启服务
  */
 function start() {
+    let now = new Date();
+    period = {start: now.getTime(), utc: dateformat(now, 'yyyy-mm-dd HH:MM:ss')};
     stop();
 
     model.getTaskCronFromServer(function (err, results) {
@@ -32,7 +41,7 @@ function start() {
  */
 function stop() {
     if (tasks) {
-        var task;
+        let task;
         while (tasks.length > 0) {
             task = tasks.shift();
             if (task) {
@@ -50,8 +59,8 @@ function stop() {
  */
 function newTasks(results) {
     tasks = [];
-    for (var i = 0; i < results.length; i++) {
-        tasks.push(new TaskClass(config.TASK_TID, config.TASK_MAILTO, results[i]));
+    for (let i = 0; i < results.length; i++) {
+        tasks.push(new Schedule(config.tid, config.mail, results[i]));
         trace.log(results[i].time, results[i].value);
     }
     trace.log('task-total Number', tasks.length);
@@ -78,15 +87,31 @@ exports.stop = function () {
  * [{'id':123,'errorCount':3,'successCount':5}]
  * @returns {*}
  */
-exports.getAllStatus = function () {
+exports.getList = function () {
     if (tasks) {
-        var all = [];
-        for (var i = 0; i < tasks.length; i++) {
+        let all = [];
+        for (let i = 0; i < tasks.length; i++) {
             all.push(tasks[i].getInfo());
         }
         return all;
     }
     return [];
+};
+
+/**
+ * 返回执行成功率
+ * @returns {Number}
+ */
+exports.getCronStatus = function () {
+    var list = this.getList();
+    console.log(list);
+    var success = 0;
+    var error = 0;
+    for (var key in list) {
+        success += list[key].successCount;
+        error += list[key].errorCount;
+    }
+    return parseInt(success * 100 / (success + error));
 };
 
 /**
@@ -96,7 +121,7 @@ exports.getAllStatus = function () {
  */
 exports.getIdStatus = function (id) {
     if (tasks && id) {
-        for (var i = 0; i < tasks.length; i++) {
+        for (let i = 0; i < tasks.length; i++) {
             if (tasks[i].getId() == id) {
                 return tasks[i].getInfo();
             }
@@ -117,4 +142,12 @@ exports.refreshTask = function (callback) {
     } catch (e) {
         callback('error', e.message);
     }
+};
+
+/**
+ * 开放server period desc
+ * @type {{dt: number, start: null}}
+ */
+exports.period = function () {
+    return {dt: new Date().getTime() - period.start, utc: period.utc};
 };

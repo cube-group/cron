@@ -1,70 +1,123 @@
 /**
  * Created by linyang on 17/4/21.
+ * cron server config
+ * argv
  */
-var fs = require('fs');
-var trace = require('../libs/trace');
-var prodConfig = require('./prod');
+let fs = require('fs');
+let argv = require('argv');
+let trace = require('../libs/trace');
+let utils = require('../libs/utils');
 
-var mainConfig = {
+let mainConfig = {
     /**
-     * 版本号
+     * version
      */
-    VERSION: "v0.0.4-20170603",
+    VERSION: "v0.1.1",
     /**
-     * 服务器http服务端口.
+     * current task-engine name
      */
-    PORT: 3000,
+    name: null,
     /**
-     * http server已经启动中.
+     * web server port
      */
-    HTTP_SERVER_RUNNING: 0,
+    port: 3000,
     /**
-     * 当前启动的任务机所属tid
+     * local server address
      */
-    TASK_TID: 0,
+    address: "",
     /**
-     * 当前启动的任务机报警邮件组
+     * web server running
      */
-    TASK_MAILTO: "",
+    running: 0,
     /**
-     * 邮件发送配置
+     * current task-engine id
      */
-    MAIL: {
-        host: "smtp.*.com",
+    tid: 0,
+    /**
+     * current task-engine mail alert team
+     */
+    mail: "",
+    //mail setting
+    mailSetting: {
+        host: "smtp.you.com",
         secureConnection: true,
         port: 465,
         auth: {
-            user: 'fuck@you.com',
+            user: 'hello@you.com',
             pass: 'password'
         },
         from: 'system@fuck.com',
-        to: 'a@foryou.com,b@foryou.com'
-    }
+        to: 'hello@mail.com,world@mail.com'
+    },
+    api: {
+        secret: 'hello-node-cron'
+    },
+    mysql: {
+        connectionLimit: 1,
+        acquireTimeout: 3000,
+        host: "127.0.0.1",
+        port: 3306,
+        user: "root",
+        password: "agreement",
+        database: "cron"
+    },
+    //current task-engine's absolute network ip
+    ip: null,
+    //current task-engine's inner network ip
+    iip: null,
+    //current task-engine's code
+    //when the ip or iip is not confirmed , you should run the task witch code
+    //example: node bin/task -c code.
+    //the code should must be unique.
+    code: null,
+    //current task-engine is master-engine or not.
+    //master-engine can show all the task-engines.
+    master: false,
 };
 
+//argv arguments
+argv.option([
+    {
+        name: 'code',
+        short: 'c',
+        type: 'string',
+        description: '设置任务机编号',
+        example: "'node bin/task -c=任务机编号'"
+    },
+    {
+        name: 'ip',
+        short: 'ip',
+        type: 'string',
+        description: '设置外网ip',
+        example: "'node bin/task -ip=127.0.0.1'"
+    },
+    {
+        name: 'iip',
+        short: 'iip',
+        type: 'string',
+        description: '设置内网ip',
+        example: "'node bin/task -iip=127.0.0.1'"
+    },
+]);
 
-/**
- * 服务器环境检测
- * @returns {*}
- */
-function init() {
-    var modeConfig = prodConfig;
+argv.version(mainConfig.VERSION);
 
-    //配置未找到失败
-    if (!modeConfig) {
-        trace.error('env invalid');
-        process.exit();
-    }
-
-    //config merge
-    for (var key in mainConfig) {
-        modeConfig[key] = mainConfig[key];
-    }
-
-    console.dir(modeConfig);
-    mainConfig = modeConfig;
+let options = argv.run().options;
+if (options.code) {
+    mainConfig.code = options.code;
 }
-
-init();
+if (options.ip) {
+    mainConfig.ip = options.ip;
+} else {
+    mainConfig.ip = utils.getAbsoluteIPAddress();
+}
+if (options.iip) {
+    mainConfig.iip = options.iip;
+} else {
+    mainConfig.iip = utils.getInnerIPAddress();
+}
+if (options.master) {
+    mainConfig.master = true;
+}
 
 module.exports = mainConfig;

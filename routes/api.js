@@ -13,7 +13,7 @@ var router = express.Router();
  * 首页
  */
 router.get('/', function (req, res, next) {
-    output.error(res, 'welcome to use nodeservice :)');
+    output.error(res, 'welcome to use cron :)');
 });
 
 
@@ -39,7 +39,7 @@ router.post('/*', function (req, res, next) {
     if (auth.check(req.body)) {
         next();
     } else {
-        output.error(res, 'nodeservice auth error :)');
+        output.error(res, 'auth error :)');
     }
 });
 

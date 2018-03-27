@@ -4,7 +4,7 @@
 var mysql = require('mysql');
 var trace = require('../libs/trace');
 var config = require('../conf/config');
-var pool = mysql.createPool(config.MYSQL.MAIN);
+var pool = mysql.createPool(config.mysql);
 
 
 /**
@@ -29,7 +29,11 @@ exports.exec = function (sql, values, callback) {
             callback(err, []);
             return;
         }
-        var query = connection.query({sql: sql, timeout: 10000, values: values}, function (err, rows, fields) {
+        let query = connection.query({
+            sql: sql,
+            timeout: config.mysql.acquireTimeout,
+            values: values
+        }, function (err, rows, fields) {
             connection.release();
             callback(err, rows, fields);
         });

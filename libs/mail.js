@@ -20,7 +20,7 @@ const config = require('../conf/config');
  */
 function mail(options, callback) {
     //配置邮件
-    var transporter = mailer.createTransport(config.MAIL);
+    var transporter = mailer.createTransport(config.mailSetting);
 
     //发送邮件
     //{subject:'标题',html:'content',from:'发送者',to:'xxx@xx.com,xx@xx.com'}
@@ -29,7 +29,7 @@ function mail(options, callback) {
 
 exports.send = function (content, receiver, callback) {
     if (!receiver) {
-        receiver = config.MAIL.to;
+        receiver = config.mailSetting.to;
     }
     mail({
         subject: '[nodeservice]',

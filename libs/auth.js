@@ -15,7 +15,7 @@ exports.check = function (post) {
     }
 
     //md5校验
-    if (utils.md5(post.authAction + post.authTime + post.authUrl + config.API.SECRET) == post.token) {
+    if (utils.md5(post.authAction + post.authTime + post.authUrl + config.api.secret) == post.token) {
         return true;
     }
     return false;
