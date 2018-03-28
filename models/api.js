@@ -2,38 +2,24 @@ var child_process = require('child_process');
 var config = require('../conf/config');
 var utils = require('../libs/utils');
 var server = require('../service/task/server');
-
+var sqls = require('../conf/sqls');
+var db = require('../libs/db');
 
 /**
  * 获取任务列表和本机信息.
  * @return {array}|{bool}
  */
 exports.info = function () {
-    var list = server.getAllStatus();
-
-    if (list) {
-        var successCount = 0;
-        var errorCount = 0;
-        for (var i = 0; i < list.length; i++) {
-            successCount += list[i].successCount;
-            errorCount += list[i].errorCount;
-        }
-
-        var totalCont = successCount + errorCount;
-
-        return {
-            successCount: successCount,
-            errorCount: errorCount,
-            execRate: totalCont ? (successCount * 100 / totalCont).toFixed(2) : 0,
-            cpu: utils.getCpuPercent(),
-            mem: utils.getMemPercent(),
-            list: list
-        };
-    }
-
-    return null;
+    return {
+        'period': server.period(),
+        'list': server.getList(),
+        'cpu': utils.getCpuPercent(),
+        'mem': utils.getMemPercent(),
+        'status': server.getCronStatus(),
+        'info': config,
+        'count': server.getCount()
+    };
 };
-
 
 /**
  * 执行shell脚本.
@@ -46,39 +32,72 @@ exports.shell = function (shell, callback) {
     });
 };
 
-
 /**
  * 重新刷新所有任务.
+ * @param id
  * @param callback
  */
-exports.refreshTask = function (callback) {
-    server.refreshTask(function (err, data) {
+exports.refreshTask = function (id, callback) {
+    server.refreshTask(id, function (err, data) {
         callback(err, data);
     });
 };
 
 /**
- * 停止所有任务.
+ * stop task.
  */
 exports.stopTask = function () {
     server.stop();
 };
 
-
 /**
- * restart nginx.
+ * add task
+ * @param data
+ * @param callback
  */
-exports.restartNginx = function (callback) {
-    child_process.exec(config.SHELL.RESTART_NGINX, function (err, stdout, stderr) {
-        callback(err, err ? stderr : stdout);
+exports.addTask = function (data, callback) {
+    db.exec(sqls.ADD_TASK, [data.comment, data.time, data.value, data.mail, data.type, config.tid], function (err, rows, fields) {
+        if (err) {
+            callback(err);
+        } else {
+            server.start(rows.insertId);
+            callback(null, rows.insertId);
+        }
     });
 };
 
 /**
- * restart php-fpm.
+ * edit task
+ * @param data
+ * @param callback
  */
-exports.restartFpm = function (callback) {
-    child_process.exec(config.SHELL.RESTART_FPM, function (err, stdout, stderr) {
-        callback(err, err ? stderr : stdout);
+exports.editTask = function (data, callback) {
+    db.exec(sqls.UPDATE_TASK, [data.comment, data.time, data.value, data.mail, data.type, data.id], function (err, rows, fields) {
+        if (err) {
+            callback(err);
+        } else {
+            server.start(data.id);
+            callback(null, rows.affectedRows);
+        }
+    });
+};
+
+/**
+ * delete task
+ * @param id
+ * @param callback
+ */
+exports.deleteTask = function (id, callback) {
+    if (!id) {
+        callback({'message': 'id is null.'});
+        return;
+    }
+    db.exec(sqls.DELETE_TASK, [id], function (err, rows, fields) {
+        if (err) {
+            callback(err);
+        } else {
+            server.stop(id);
+            callback(null, rows.affectedRows);
+        }
     });
 };

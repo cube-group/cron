@@ -4,7 +4,6 @@
 let config = require('../conf/config');
 let sqls = require('../conf/sqls');
 let db = require('../libs/db');
-let utils = require('../libs/utils');
 
 /**
  * 获取当前任务机程序的信息

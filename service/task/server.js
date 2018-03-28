@@ -10,46 +10,26 @@ let dateformat = require('dateformat');
 
 /**
  * 正在执行任务的schedule列表.
- * [Task,Task,...]
  */
-let tasks = [];
+let tasks = {};
 /**
  * 启动相关时间
  * @type {{start: number, utd: string}}
  */
 let period = {start: 0, utc: ''};
 
-/**
- * 开启服务
- */
-function start() {
-    let now = new Date();
-    period = {start: now.getTime(), utc: dateformat(now, 'yyyy-mm-dd HH:MM:ss')};
-    stop();
-
-    model.getTaskCronFromServer(function (err, results) {
-        if (err) {
-            trace.error('task-server start error', err);
-            return;
-        }
-        newTasks(results);
-    });
-}
 
 /**
- * 结束服务
+ * 创建单任务
+ * @param data
  */
-function stop() {
-    if (tasks) {
-        let task;
-        while (tasks.length > 0) {
-            task = tasks.shift();
-            if (task) {
-                task.stop();
-            }
+function newTask(data) {
+    if (data) {
+        if (tasks[data.id]) {
+            tasks[data.id].stop();
         }
-        task = null;
-        tasks = null;
+        tasks[data.id] = new Schedule(config.tid, config.mail, data);
+        trace.log('[Create Task]', data.time, data.value);
     }
 }
 
@@ -58,29 +38,60 @@ function stop() {
  * @param results
  */
 function newTasks(results) {
-    tasks = [];
+    tasks = {};
+    let count = 0;
     for (let i = 0; i < results.length; i++) {
-        tasks.push(new Schedule(config.tid, config.mail, results[i]));
-        trace.log(results[i].time, results[i].value);
+        newTask(results[i]);
+        count++;
     }
-    trace.log('task-total Number', tasks.length);
+    trace.log('task-total Number', count);
 }
 
 /**
  * 开启任务服务.
  */
-exports.start = function () {
-    trace.log('task-server start');
-    start();
-};
+function start(id) {
+    model.getTaskCronFromServer(function (err, results) {
+        if (err) {
+            trace.error('task-server start error', err);
+            return;
+        }
+        if (id) {
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].id == id) {
+                    newTask(results[i]);
+                    break;
+                }
+            }
+        } else {
+            stop(null);
+            let now = new Date();
+            period = {start: now.getTime(), utc: dateformat(now, 'yyyy-mm-dd HH:MM:ss')};
+            newTasks(results);
+        }
+    });
+}
 
 /**
  * 停止任务服务.
  */
-exports.stop = function () {
-    trace.log('task-server stop');
-    stop();
-};
+function stop(id) {
+    if (!tasks) {
+        return false;
+    }
+    if (id) {
+        if (tasks[id]) {
+            tasks[id].stop();
+            delete tasks[id];
+        } else {
+            for (let key in tasks) {
+                tasks[key].stop();
+                delete tasks[key];
+            }
+            tasks = null;
+        }
+    }
+}
 
 /**
  * 获取所有任务的运行状态.
@@ -90,24 +101,28 @@ exports.stop = function () {
 exports.getList = function () {
     if (tasks) {
         let all = [];
-        for (let i = 0; i < tasks.length; i++) {
-            all.push(tasks[i].getInfo());
+        for (let key in tasks) {
+            all.push(tasks[key].getInfo());
         }
         return all;
     }
     return [];
 };
 
+exports.start = start;
+
+exports.stop = stop;
+
 /**
  * 返回执行成功率
  * @returns {Number}
  */
 exports.getCronStatus = function () {
-    var list = this.getList();
+    let list = this.getList();
     console.log(list);
-    var success = 0;
-    var error = 0;
-    for (var key in list) {
+    let success = 0;
+    let error = 0;
+    for (let key in list) {
         success += list[key].successCount;
         error += list[key].errorCount;
     }
@@ -115,29 +130,14 @@ exports.getCronStatus = function () {
 };
 
 /**
- * 按照任务id获取其运行状态.
- * @param id {int}
- * @returns {*}
- */
-exports.getIdStatus = function (id) {
-    if (tasks && id) {
-        for (let i = 0; i < tasks.length; i++) {
-            if (tasks[i].getId() == id) {
-                return tasks[i].getInfo();
-            }
-        }
-    }
-    return null;
-};
-
-/**
- * 重新刷新所有任务.
+ * 刷新任务.
+ * @param id
  * @param callback
  */
-exports.refreshTask = function (callback) {
+exports.refreshTask = function (id, callback) {
     trace.log('task-server refresh');
     try {
-        start();
+        start(id);
         callback(null, 'success');
     } catch (e) {
         callback('error', e.message);
@@ -150,4 +150,18 @@ exports.refreshTask = function (callback) {
  */
 exports.period = function () {
     return {dt: new Date().getTime() - period.start, utc: period.utc};
+};
+
+/**
+ * 获取任务数量
+ */
+exports.getCount = function () {
+    if (tasks) {
+        var count = 0;
+        for (var key in tasks) {
+            count++;
+        }
+        return count;
+    }
+    return 0;
 };

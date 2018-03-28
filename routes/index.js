@@ -1,20 +1,21 @@
 let server = require('../service/task/server');
-let utils = require('../libs/utils');
-let config = require('../conf/config');
+let model = require('../models/api');
 let express = require('express');
 let router = express.Router();
 
-/* GET home page. */
+
+/* auth验证 */
 router.get('/', function (req, res, next) {
-    let result = {
-        'period': server.period(),
-        'list': server.getList(),
-        'cpu': utils.getCpuPercent(),
-        'mem': utils.getMemPercent(),
-        'status': server.getCronStatus(),
-        'info': config
-    };
-    res.render('index', result);
+    if (!req.session.token) {
+        res.redirect('/login');
+    } else {
+        next();
+    }
+});
+
+/* GET home page. */
+router.get('/dashboard', function (req, res, next) {
+    res.render('index', model.info());
 });
 
 module.exports = router;

@@ -2,10 +2,12 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var cookieSession = require('cookie-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
+var login = require('./routes/login');
 var users = require('./routes/users');
 var api = require('./routes/api');
 
@@ -23,9 +25,16 @@ app.use(bodyParser.urlencoded({extended: false}));
 // app.use(bodyParser.raw());
 // app.use(bodyParser.text('text/xml'));
 app.use(cookieParser());
+app.use(cookieSession({
+    name: 'cron-session',
+    keys: ['cron-session-hello-world'],
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/login', login);
 app.use('/users', users);
 app.use('/api', api);
 

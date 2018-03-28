@@ -1,13 +1,22 @@
 /**
- * 任务机api http接口.
+ * Created by linyang on 2018/3/28.
+ * local api
  */
 var os = require('os');
 var express = require('express');
 var output = require('../libs/output');
 var auth = require('../libs/auth');
 var api = require('../models/api');
-
 var router = express.Router();
+
+/* auth验证 */
+router.use('/', function (req, res, next) {
+    if (!req.session.token) {
+        res.redirect('/login');
+    } else {
+        next();
+    }
+});
 
 /**
  * 首页
@@ -16,33 +25,12 @@ router.get('/', function (req, res, next) {
     output.error(res, 'welcome to use cron :)');
 });
 
-
-/**
- * 获取当前任务机ip信息
- */
-router.get('/get-ip', function (req, res, next) {
-    output.echo(res, os.networkInterfaces(), 'ipinfo');
-});
-
 /**
  * 返回任务机相关执行信息.
  */
-router.post('/info', function (req, res, next) {
+router.get('/info', function (req, res, next) {
     output.echo(res, api.info(), 'success');
 });
-
-
-/**
- * 请求合法性校验.
- */
-router.post('/*', function (req, res, next) {
-    if (auth.check(req.body)) {
-        next();
-    } else {
-        output.error(res, 'auth error :)');
-    }
-});
-
 
 /**
  * 执行当前任务机shell脚本.
@@ -61,6 +49,46 @@ router.post('/shell', function (req, res, next) {
     }
 });
 
+/**
+ * 添加任务
+ */
+router.post('/add-task', function (req, res, next) {
+    api.addTask(req.body, function (err, result) {
+        if (err) {
+            output.error(res, err.message);
+        } else {
+            output.echo(res, {'id': result}, 'task-add success');
+        }
+    });
+});
+
+/**
+ * 任务编辑
+ */
+router.post('/edit-task', function (req, res, next) {
+    console.log(req.body);
+    api.editTask(req.body, function (err, result) {
+        if (err) {
+            output.error(res, err.message);
+        } else {
+            output.echo(res, {'rows': result}, 'task-edit success');
+        }
+    });
+});
+
+/**
+ * 任务删除
+ */
+router.post('/delete-task', function (req, res, next) {
+    api.deleteTask(req.body.id, function (err, result) {
+        if (err) {
+            output.error(res, err.message);
+        } else {
+            output.echo(res, {'rows': result}, 'task-edit success');
+        }
+    });
+});
+
 
 /**
  * 停止当前任务机所有任务
@@ -72,7 +100,6 @@ router.post('/stop-task', function (req, res, next) {
     } catch (e) {
         output.error(res, e.message);
     }
-
 });
 
 
@@ -80,39 +107,11 @@ router.post('/stop-task', function (req, res, next) {
  * 重启当前任务机所有任务
  */
 router.post('/restart-task', function (req, res, next) {
-    api.refreshTask(function (err, data) {
+    api.refreshTask(req.body.id, function (err, data) {
         if (err) {
             output.error(res, 'restart-task error ' + data);
         } else {
             output.echo(res, '', 'restart-task success');
-        }
-    });
-});
-
-
-/**
- * 重启当前任务机php-fpm
- */
-router.post('/restart-fpm', function (req, res, next) {
-    api.restartFpm(function (err, data) {
-        if (err) {
-            output.error(res, 'restart-fpm error ' + data);
-        } else {
-            output.echo(res, '', 'restart-fpm success');
-        }
-    });
-});
-
-
-/**
- * 重启当前任务机nginx
- */
-router.post('/restart-nginx', function (req, res, next) {
-    api.restartNginx(function (err, data) {
-        if (err) {
-            output.error(res, 'restart-nginx error ' + data);
-        } else {
-            output.echo(res, '', 'restart-nginx success');
         }
     });
 });

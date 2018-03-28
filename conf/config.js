@@ -7,6 +7,7 @@ let fs = require('fs');
 let argv = require('argv');
 let trace = require('../libs/trace');
 let utils = require('../libs/utils');
+let base32 = require('thirty-two');
 
 let mainConfig = {
     /**
@@ -50,7 +51,7 @@ let mainConfig = {
         to: 'hello@mail.com,world@mail.com'
     },
     api: {
-        secret: 'hello-node-cron'
+        secret: 'hello-node-cron-totp-secret'
     },
     mysql: {
         connectionLimit: 1,
@@ -98,6 +99,13 @@ argv.option([
         description: '设置内网ip',
         example: "'node bin/task -iip=127.0.0.1'"
     },
+    {
+        name: 'totp',
+        short: 't',
+        type: 'boolean',
+        description: '获取google auth url',
+        example: "'node bin/task -totp=secret'"
+    },
 ]);
 
 argv.version(mainConfig.VERSION);
@@ -118,6 +126,16 @@ if (options.iip) {
 }
 if (options.master) {
     mainConfig.master = true;
+}
+if (options.totp) {
+    // encoded will be the secret key, base32 encoded
+    var encoded = base32.encode(mainConfig.api.secret);
+    // Google authenticator doesn't like equal signs
+    var encodedForGoogle = encoded.toString().replace(/=/g, '');
+    // to create a URI for a qr code (change totp to hotp is using hotp)
+    var uri = 'otpauth://totp/cron-engine?secret=' + encodedForGoogle;
+    console.log(uri);
+    process.exit();
 }
 
 module.exports = mainConfig;

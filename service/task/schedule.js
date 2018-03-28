@@ -58,7 +58,6 @@ function MySchedule(tid, mailto, data) {
                 , mailto, function () {
                 }
             );
-
         }
     }
 
@@ -72,6 +71,11 @@ function MySchedule(tid, mailto, data) {
             lastTime = new Date().getTime();
         } else {
             child = null;
+            if(data.type){
+                console.log('executeStatus',flag,child,data);
+            }
+
+
             lastUseTime = new Date().getTime() - lastTime;
             if (averageUseTime) {
                 averageUseTime = parseInt((averageUseTime + lastUseTime) >> 1);
@@ -84,8 +88,10 @@ function MySchedule(tid, mailto, data) {
     //启动schedule
     //同时只允许有一个shell或http命令在执行.
     //防止多个shell或http命令让系统挂掉.
-    var job = nodeCron.schedule(data.time, function () {
-
+    let job = nodeCron.schedule(data.time, function () {
+        if (data.type) {
+            console.log('schedule', child);
+        }
         if (!child) {
             executeStatus(true);
             child = execs[data.type].exec(data.value, function (err, data) {
@@ -111,7 +117,9 @@ function MySchedule(tid, mailto, data) {
         }
         //立即停止子进程
         if (child) {
-            child.stdin.end();
+            if (child.stdin) {
+                child.stdin.end();
+            }
             child.kill('SIGTERM');
             //如果是shell任务
             if (child.pid && !data.type) {
@@ -179,6 +187,8 @@ function MySchedule(tid, mailto, data) {
         return {
             id: data.id,
             comment: data.comment,
+            type: data.type,
+            mail: data.mail,
             errorCount: this.getErrorCount(),
             successCount: this.getSuccessCount(),
             status: this.getSuccessCount() + '/' + (this.getErrorCount() + this.getSuccessCount()),

@@ -1,7 +1,7 @@
 /**
  * Created by linyang on 17/3/3.
  */
-var execShell = require('child_process').exec;
+let execShell = require('child_process').exec;
 
 /**
  * 执行shell脚本.
@@ -11,12 +11,11 @@ var execShell = require('child_process').exec;
  * @return mixed
  */
 exports.exec = function (value, callback) {
-    var instance = execShell(value, function (err, stdout, stderr) {
+    return execShell(value, function (err, stdout, stderr) {
         if (err) {
             callback(err, stdout + ' ' + stderr);
         } else {
             callback(null, stdout);
         }
     });
-    return instance;
 };

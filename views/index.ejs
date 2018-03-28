@@ -155,7 +155,8 @@
                             <div class="panel-heading">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <span class="panel-title">Current Task-Engine Cron List(Total: 0)</span>
+                                        <span class="panel-title">Current Task-Engine Cron List(Total: <%= count %>
+                                            )</span>
                                     </div>
                                     <div class="col-md-6 text-right">
                                         <a class="btn btn-primary" onclick="onTaskAdd()">Add</a>
@@ -206,9 +207,16 @@
                                             <%= item.status %>
                                         </td>
                                         <td>
-                                            <button class="btn btn-primary btn-sm">edit</button>
-                                            <button class="btn btn-danger btn-sm">delete</button>
-                                            <button class="btn btn-sm">restart</button>
+                                            <button class="btn btn-primary btn-sm"
+                                                    onclick="onTaskEdit('<%= item.id %>','<%= item.comment %>','<%= item.time %>','<%= item.value %>','<%= item.mail %>','<%= item.type %>')">
+                                                edit
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" onclick="onTaskDel('<%= item.id %>')">
+                                                delete
+                                            </button>
+                                            <button class="btn btn-sm" onclick="onTaskRestart('<%= item.id %>')">
+                                                restart
+                                            </button>
                                         </td>
                                     </tr>
                                     <% }) %>
@@ -244,16 +252,13 @@
             <div class="modal-body">
                 <div class="form">
                     <div class="form-group">
+                        <input class="form-control" placeholder="comment" type="text" id="edit-input-comment">
+                    </div>
+                    <div class="form-group">
                         <input class="form-control" placeholder="cron time" type="text" id="edit-input-time">
                     </div>
                     <div class="form-group">
                         <input class="form-control" placeholder="shell or url" type="text" id="edit-input-value">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" placeholder="comment" type="text" id="edit-input-comment">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" placeholder="alert mail group" type="text" id="edit-input-mail">
                     </div>
                     <select class="form-control" id="edit-select-type">
                         <option value="0">Linux Shell</option>
@@ -268,7 +273,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Submit</button>
+                <button type="button" class="btn btn-primary" id="edit-submit" onclick="onClickEditSubmit()">Submit
+                </button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
@@ -282,103 +288,211 @@
 <script src="assets/vendor/chartist/js/chartist.min.js"></script>
 <script src="assets/scripts/klorofil-common.js"></script>
 <script>
-    $(function () {
-        var data, options;
+    //    $(function () {
+    //        var data, options;
+    //
+    //        // visits trend charts
+    //        data = {
+    //            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    //            series: [{
+    //                name: 'series-real',
+    //                data: [200, 380, 350, 320, 410, 450, 570, 400, 555, 620, 750, 900],
+    //            }, {
+    //                name: 'series-projection',
+    //                data: [240, 350, 360, 380, 400, 450, 480, 523, 555, 600, 700, 800],
+    //            }]
+    //        };
+    //
+    //        options = {
+    //            fullWidth: true,
+    //            lineSmooth: false,
+    //            height: "270px",
+    //            low: 0,
+    //            high: 'auto',
+    //            series: {
+    //                'series-projection': {
+    //                    showArea: true,
+    //                    showPoint: false,
+    //                    showLine: false
+    //                },
+    //            },
+    //            axisX: {
+    //                showGrid: false,
+    //
+    //            },
+    //            axisY: {
+    //                showGrid: false,
+    //                onlyInteger: true,
+    //                offset: 0,
+    //            },
+    //            chartPadding: {
+    //                left: 20,
+    //                right: 20
+    //            }
+    //        };
+    //
+    ////        new Chartist.Line('#headline-chart', data, options);
+    //
+    //
+    //        // real-time pie chart
+    //        var sysLoad = $('#system-load').easyPieChart({
+    //            size: 130,
+    //            barColor: function (percent) {
+    //                return "rgb(" + Math.round(200 * percent / 100) + ", " + Math.round(200 * (1.1 - percent / 100)) + ", 0)";
+    //            },
+    //            trackColor: 'rgba(245, 245, 245, 0.8)',
+    //            scaleColor: false,
+    //            lineWidth: 5,
+    //            lineCap: "square",
+    //            animate: 800
+    //        });
+    //
+    //        var updateInterval = 3000; // in milliseconds
+    //
+    //        setInterval(function () {
+    //            var randomVal;
+    //            randomVal = getRandomInt(0, 100);
+    //
+    //            sysLoad.data('easyPieChart').update(randomVal);
+    //            sysLoad.find('.percent').text(randomVal);
+    //        }, updateInterval);
+    //
+    //        function getRandomInt(min, max) {
+    //            return Math.floor(Math.random() * (max - min + 1)) + min;
+    //        }
+    //    });
 
-        // visits trend charts
-        data = {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            series: [{
-                name: 'series-real',
-                data: [200, 380, 350, 320, 410, 450, 570, 400, 555, 620, 750, 900],
-            }, {
-                name: 'series-projection',
-                data: [240, 350, 360, 380, 400, 450, 480, 523, 555, 600, 700, 800],
-            }]
-        };
-
-        options = {
-            fullWidth: true,
-            lineSmooth: false,
-            height: "270px",
-            low: 0,
-            high: 'auto',
-            series: {
-                'series-projection': {
-                    showArea: true,
-                    showPoint: false,
-                    showLine: false
-                },
-            },
-            axisX: {
-                showGrid: false,
-
-            },
-            axisY: {
-                showGrid: false,
-                onlyInteger: true,
-                offset: 0,
-            },
-            chartPadding: {
-                left: 20,
-                right: 20
-            }
-        };
-
-//        new Chartist.Line('#headline-chart', data, options);
-
-
-        // real-time pie chart
-        var sysLoad = $('#system-load').easyPieChart({
-            size: 130,
-            barColor: function (percent) {
-                return "rgb(" + Math.round(200 * percent / 100) + ", " + Math.round(200 * (1.1 - percent / 100)) + ", 0)";
-            },
-            trackColor: 'rgba(245, 245, 245, 0.8)',
-            scaleColor: false,
-            lineWidth: 5,
-            lineCap: "square",
-            animate: 800
-        });
-
-        var updateInterval = 3000; // in milliseconds
-
-        setInterval(function () {
-            var randomVal;
-            randomVal = getRandomInt(0, 100);
-
-            sysLoad.data('easyPieChart').update(randomVal);
-            sysLoad.find('.percent').text(randomVal);
-        }, updateInterval);
-
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-    });
-
+    var editId = 0;
+    var editType = null;
     //添加任务
     function onTaskAdd() {
+        editId = 0;
+        editType = 'add';
         $('#modal-edit').modal('show');
+        $('#modal-edit-title').val('');
+        $('#edit-input-comment').val('');
+        $('#edit-input-time').val('');
+        $('#edit-input-value').val('');
+        $('#edit-check-mail').prop('checked', false);
+        $('#edit-select-type').val(0);
     }
 
     //编辑任务
-    function onTaskEdit() {
+    function onTaskEdit(id, comment, time, value, mail, type) {
+        editId = id;
+        editType = 'edit';
         $('#modal-edit').modal('show');
+        $('#modal-edit-title').val(`edit ${id}, comment ${comment}`);
+        $('#edit-input-comment').val(comment);
+        $('#edit-input-time').val(time);
+        $('#edit-input-value').val(value);
+        $('#edit-check-mail').prop('checked', mail == true);
+        $('#edit-select-type').val(type);
+    }
+
+    //点击确认提交按钮
+    function onClickEditSubmit() {
+        if (!confirm('Are you sure?')) {
+            return;
+        }
+        var data = {
+            'comment': $('#edit-input-comment').val(),
+            'time': $('#edit-input-time').val(),
+            'value': $('#edit-input-value').val(),
+            'mail': $('#edit-check-mail').is(':checked') ? 1 : 0,
+            'type': $('#edit-select-type').val()
+        };
+        console.log(data);
+        if (editType == 'add') {
+            $.post(
+                '/api/add-task',
+                data,
+                function (callback) {
+                    alert(callback.msg);
+                    if (!callback.code) {
+                        window.location.reload();
+                    }
+                },
+                "json"
+            ).error(function () {
+                alert('server exception.');
+            });
+        } else {
+            data.id = editId;
+            $.post(
+                '/api/edit-task',
+                data,
+                function (callback) {
+                    alert(callback.msg);
+                    if (!callback.code) {
+                        window.location.reload();
+                    }
+                },
+                "json"
+            ).error(function () {
+                alert('server exception.');
+            });
+        }
     }
 
     //删除任务
-    function onTaskDel() {
-
+    function onTaskDel(id) {
+        if (!confirm(`Delete Task id: ${id} ?`)) {
+            return;
+        }
+        $.post(
+            '/api/delete-task',
+            {"id": id},
+            function (callback) {
+                alert(callback.msg);
+                if (!callback.code) {
+                    window.location.reload();
+                }
+            },
+            "json"
+        ).error(function () {
+            alert('server exception.');
+        });
     }
 
     //重启任务
-    function onTaskRestart() {
-
+    function onTaskRestart(id) {
+        if (!confirm(`Restart Task id: ${id} ?`)) {
+            return;
+        }
+        $.post(
+            '/api/restart-task',
+            {"id": id},
+            function (callback) {
+                alert(callback.msg);
+                if (!callback.code) {
+                    window.location.reload();
+                }
+            },
+            "json"
+        ).error(function () {
+            alert('server exception.');
+        });
     }
 
     //重启所有任务
-    function onTaskRestartAll(){
-
+    function onTaskRestartAll() {
+        if (!confirm(`Restart All Task?`)) {
+            return;
+        }
+        $.post(
+            '/api/restart-task',
+            {},
+            function (callback) {
+                alert(callback.msg);
+                if (!callback.code) {
+                    window.location.reload();
+                }
+            },
+            "json"
+        ).error(function () {
+            alert('server exception.');
+        });
     }
 </script>
 

@@ -1,7 +1,7 @@
 /**
  * Created by linyang on 17/3/3.
  */
-var curl = require('../../libs/curl');
+let curl = require('../../libs/curl');
 
 /**
  * 执行http任务.
@@ -10,7 +10,7 @@ var curl = require('../../libs/curl');
  * @param callback {function}
  */
 exports.exec = function (value, callback) {
-    curl.send({url: value, tryMax: 3, timeout: -1}, callback);
+    curl.send({url: value, timeout: 5}, callback);
     return this;
 };
 

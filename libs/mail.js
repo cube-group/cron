@@ -32,8 +32,8 @@ exports.send = function (content, receiver, callback) {
         receiver = config.mailSetting.to;
     }
     mail({
-        subject: '[nodeservice]',
-        from: config.MAIL.from,
+        subject: '[cron-mail-alert]',
+        from: config.mail.from,
         to: receiver,
         html: content
     }, callback);
