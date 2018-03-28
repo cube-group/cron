@@ -12,9 +12,9 @@ let model = require('./task');
 let curl = require('../libs/curl');
 
 /**
- * 获取某个节点task-engine的数据
- * @param id
- * @returns {{engines: [*], period: {dt: number, start: null}, list: *, cpu: number, mem: number, status: Number, info, count}}
+ * master Mode
+ * 获取其它节点的信息
+ * @param tid
  */
 exports.info = function (tid) {
     async.auto({
@@ -25,7 +25,7 @@ exports.info = function (tid) {
         },
         getData: function (callback, results) {
             let address = '';
-            for (var key in results.getList) {
+            for (let key in results.getList) {
                 if (results.getList[key].id = tid) {
                     address = results.getList[key].address;
                 }
