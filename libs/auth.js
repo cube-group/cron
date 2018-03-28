@@ -6,19 +6,18 @@ var config = require('../conf/config');
 
 /**
  * http访问合法性校验.
- * @param post
+ * @param data
  * @returns {boolean}
  */
-exports.check = function (post) {
-    if (!post.timestamp) {
+exports.check = function (data) {
+    if (!data.timestamp || !data.token) {
         return false;
     }
-
     //md5校验
-    if (utils.md5(post.timestamp + config.api.secret) == post.token) {
-        return true;
+    if (data.token != utils.md5(data.timestamp + config.api.secret)) {
+        return false;
     }
-    return false;
+    return true;
 };
 
 /**
@@ -28,10 +27,7 @@ exports.loginAuthCheck = function (session) {
     if (!session) {
         return false;
     }
-    if (!session.token || !session.timestamp) {
-        return false;
-    }
-    if (session.token != utils.md5(session.timestamp + config.api.secret)) {
+    if (!this.check(session)){
         return false;
     }
     return true;

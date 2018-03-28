@@ -55,14 +55,11 @@
             <div class="sidebar-scroll" style="overflow: hidden; width: auto; height: 95%;">
                 <nav>
                     <ul class="nav">
-                        <li><a href="#" class="active"><i class="lnr lnr-code"></i><span>127.0.0.1</span></a>
+                        <% engines.forEach(function(engine){ %>
+                        <li><a href="<%= engine.url %>" class="<%= engine.active %>"><i
+                                        class="lnr lnr-code"></i><span><%= engine.name %></span></a>
                         </li>
-                        <li><a href="#" class=""><i class="lnr lnr-code"></i><span>127.0.0.1</span></a>
-                        </li>
-                        <li><a href="#" class=""><i class="lnr lnr-code"></i><span>127.0.0.1</span></a>
-                        </li>
-                        <li><a href="#" class=""><i class="lnr lnr-code"></i><span>127.0.0.1</span></a>
-                        </li>
+                        <% }) %>
                     </ul>
                 </nav>
             </div>

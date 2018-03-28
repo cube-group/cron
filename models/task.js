@@ -1,5 +1,6 @@
 /**
- * 任务机数据模型
+ * Created by linyang on 2018/3/28.
+ * task-engine data.
  */
 let config = require('../conf/config');
 let sqls = require('../conf/sqls');
@@ -12,7 +13,7 @@ let db = require('../libs/db');
 exports.getTaskServerInfo = function (callback) {
     let sqlValues = [config.ip, config.iip, config.code];
 
-    db.exec(sqls.SELECT_TASK_SERVER, sqlValues, function (err, rows, fields) {
+    db.exec(sqls.SELECT_TASK_ENGINE, sqlValues, function (err, rows, fields) {
         if (err || !rows.length) {
             callback(err ? err : 'err');
         } else {
@@ -26,6 +27,20 @@ exports.getTaskServerInfo = function (callback) {
             console.dir(config);
 
             callback(null);
+        }
+    });
+};
+
+/**
+ * 获取任务列表
+ * @param callback
+ */
+exports.getTaskList = function (callback) {
+    db.exec(sqls.SELECT_TASK_ENGINE_LIST, [], function (err, rows, fields) {
+        if (err || !rows.length) {
+            callback(err ? err : 'err');
+        } else {
+            callback(null, rows);
         }
     });
 };

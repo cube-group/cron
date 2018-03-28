@@ -157,8 +157,8 @@ exports.period = function () {
  */
 exports.getCount = function () {
     if (tasks) {
-        var count = 0;
-        for (var key in tasks) {
+        let count = 0;
+        for (let key in tasks) {
             count++;
         }
         return count;

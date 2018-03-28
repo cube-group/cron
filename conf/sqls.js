@@ -3,9 +3,13 @@
  */
 let data = {
     /**
+     * 获取任务机列表.
+     */
+    SELECT_TASK_ENGINE_LIST: 'SELECT * FROM `c_task`',
+    /**
      * 获取任务机详情.
      */
-    SELECT_TASK_SERVER: 'SELECT * FROM `c_task` WHERE `ip`=? OR `iip`=? OR `code`=? limit 0,1',
+    SELECT_TASK_ENGINE: 'SELECT * FROM `c_task` WHERE `ip`=? OR `iip`=? OR `code`=? limit 0,1',
     /**
      * 获取任务机的所有任务.
      */

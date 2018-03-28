@@ -2,14 +2,10 @@
  * Created by linyang on 17/3/3.
  * 核心任务单元
  */
-var nodeCron = require('node-cron');
-var mail = require('../../libs/mail');
-var trace = require('../../libs/trace');
-var shell = require('./shell');
-var http = require('./http');
-var kill = require('./kill');
-
-var execs = [shell, http];
+let nodeCron = require('node-cron');
+let mail = require('../../libs/mail');
+let trace = require('../../libs/trace');
+let exec = require('./exec');
 
 /**
  * 任务主体.
@@ -24,20 +20,20 @@ function MySchedule(tid, mailto, data) {
         return null;
     }
 
-    //子进程.
-    var child = null;
+    //执行实例.
+    let execInstance = null;
     //当前执行的错误次数.
-    var errorCount = 0;
+    let errorCount = 0;
     //当前执行的成功次数.
-    var successCount = 0;
+    let successCount = 0;
     //最近一次执行失败的错误内容.
-    var lastError = '';
+    let lastError = '';
     //上次执行开始的时间戳(单位:毫秒)
-    var lastTime = 0;
+    let lastTime = 0;
     //最近一次执行耗时(单位:毫秒)
-    var lastUseTime = 0;
+    let lastUseTime = 0;
     //平均执行耗时(单位:毫秒)
-    var averageUseTime = 0;
+    let averageUseTime = 0;
 
 
     /**
@@ -70,11 +66,8 @@ function MySchedule(tid, mailto, data) {
         if (flag) {
             lastTime = new Date().getTime();
         } else {
-            child = null;
-            if(data.type){
-                console.log('executeStatus',flag,child,data);
-            }
-
+            execInstance.close();
+            execInstance = null;
 
             lastUseTime = new Date().getTime() - lastTime;
             if (averageUseTime) {
@@ -89,12 +82,14 @@ function MySchedule(tid, mailto, data) {
     //同时只允许有一个shell或http命令在执行.
     //防止多个shell或http命令让系统挂掉.
     let job = nodeCron.schedule(data.time, function () {
-        if (data.type) {
-            console.log('schedule', child);
-        }
-        if (!child) {
+        if (!execInstance) {
             executeStatus(true);
-            child = execs[data.type].exec(data.value, function (err, data) {
+            if (data.type) {
+                execInstance = new exec.Shell();
+            } else {
+                execInstance = new exec.Curl();
+            }
+            execInstance.exec(data.value, function (err, data) {
                 executeStatus(false);
                 if (err) {
                     errorCount++;
@@ -115,17 +110,10 @@ function MySchedule(tid, mailto, data) {
             job.destroy();
             job = null;
         }
-        //立即停止子进程
-        if (child) {
-            if (child.stdin) {
-                child.stdin.end();
-            }
-            child.kill('SIGTERM');
-            //如果是shell任务
-            if (child.pid && !data.type) {
-                kill(child.pid);
-            }
-            child = null;
+        //立即停止执行实例
+        if (execInstance) {
+            execInstance.close();
+            execInstance = null;
         }
         trace.log('Task ID ', data.id, 'Job Killed');
     };
@@ -135,8 +123,8 @@ function MySchedule(tid, mailto, data) {
      * 是否正在执行脚本.
      * @returns {boolean}
      */
-    this.getIsExecuteIng = function () {
-        return isExecuteIng;
+    this.isRunning = function () {
+        return execInstance != null;
     };
 
     /**

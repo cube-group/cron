@@ -1,9 +1,13 @@
-var child_process = require('child_process');
-var config = require('../conf/config');
-var utils = require('../libs/utils');
-var server = require('../service/task/server');
-var sqls = require('../conf/sqls');
-var db = require('../libs/db');
+/**
+ * Created by linyang on 2018/3/28.
+ * task api model function.
+ */
+let child_process = require('child_process');
+let config = require('../conf/config');
+let utils = require('../libs/utils');
+let server = require('../service/task/server');
+let sqls = require('../conf/sqls');
+let db = require('../libs/db');
 
 /**
  * 获取任务列表和本机信息.
@@ -11,6 +15,11 @@ var db = require('../libs/db');
  */
 exports.info = function () {
     return {
+        'engines': [{
+            'name': config.address,
+            'url': `http://${config.address}/dashboard?tid=${config.tid}`,
+            'active': 'active'
+        }],
         'period': server.period(),
         'list': server.getList(),
         'cpu': utils.getCpuPercent(),

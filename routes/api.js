@@ -1,20 +1,23 @@
 /**
  * Created by linyang on 2018/3/28.
- * local api
+ * open api
  */
-var os = require('os');
-var express = require('express');
-var output = require('../libs/output');
-var auth = require('../libs/auth');
-var api = require('../models/api');
-var router = express.Router();
+let os = require('os');
+let express = require('express');
+let output = require('../libs/output');
+let auth = require('../libs/auth');
+let api = require('../models/api');
+let router = express.Router();
 
-/* auth验证 */
+/** auth验证 */
 router.use('/', function (req, res, next) {
-    if (!req.session.token) {
-        res.redirect('/login');
-    } else {
+    let apiAuth = auth.check(req.query);//open api auth check
+    let loginAuth = auth.loginAuthCheck(req.session);//local login auth check
+
+    if (loginAuth || apiAuth) {
         next();
+    } else {
+        res.redirect('/login');
     }
 });
 
