@@ -2,6 +2,9 @@
 ### Base Node.js
 * node must
 * npm must
+* fast build your crontab dashboard install of linux crontab -e
+* crontab? fuck that!
+![](https://github.com/cube-group/cron/blob/master/public/images/dashboard.png)
 ### How to use it?
 ```
 git clone git@github.com:cube-group/cron.git
@@ -104,5 +107,3 @@ cd cron && node bin/setup
 cd cron && node bin/task -t
 ```
 ![](https://github.com/cube-group/cron/blob/master/public/images/login.png)
-### How to use cron-engine?
-![](https://github.com/cube-group/cron/blob/master/public/images/dashboard.png)
