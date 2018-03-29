@@ -70,13 +70,25 @@ exports.info = function (tid, callback) {
                 'cpu': 'NaN',
                 'mem': 'NaN',
                 'status': 'NaN',
-                'info': {'address': currentEngine.address, 'name': currentEngine.name},
-                'count': 0
+                'info': {'address': currentEngine.address, 'name': currentEngine.name, 'master': config.master},
+                'count': 0,
+                'apis': {
+                    'add': '',
+                    'edit': '',
+                    'delete': '',
+                    'restart': ''
+                }
             });
             return;
         }
         let data = results.getData.data;
         data.engines = engines;
+        data['apis'] = {
+            'add': `http://${currentEngine.address}/api/add-task`,
+            'edit': `http://${currentEngine.address}/api/edit-task`,
+            'delete': `http://${currentEngine.address}/api/delete-task`,
+            'restart': `http://${currentEngine.address}/api/restart-task`,
+        };
         console.log(data);
         callback(null, data);
     });

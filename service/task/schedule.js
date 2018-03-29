@@ -6,6 +6,8 @@ let nodeCron = require('node-cron');
 let mail = require('../../libs/mail');
 let trace = require('../../libs/trace');
 let exec = require('./exec');
+let curl = require('../../libs/curl');
+let config = require('../../conf/config');
 
 /**
  * 任务主体.
@@ -54,6 +56,22 @@ function MySchedule(tid, mailto, data) {
                 , mailto, function () {
                 }
             );
+        }
+
+        if (config.webhook) {
+            let content = `[cron-engine error] engine:${config.name}  id:${data.id}  time:${data.time}  value:${data.value}`
+            let contentBody = {'msgtype': 'text', 'text': {'content': content}, 'at': {'isAtAll': true}};
+            let options = {
+                url: config.webhook,
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},//headers array
+                body: JSON.stringify(contentBody),//method为post时的body
+                timeout: 2000,//超时时间(单位:秒),<=0时不计算超时
+            };
+            console.log(options);
+            curl.send(options, function (err) {
+                console.log(err ? err.message : null);
+            });
         }
     }
 

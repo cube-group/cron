@@ -28,7 +28,13 @@ exports.info = function (args, callback) {
         'status': server.getCronStatus(),
         'info': config,
         'count': server.getCount(),
-        'err': false
+        'err': false,
+        'apis': {
+            'add': `http://${config.address}/api/add-task`,
+            'edit': `http://${config.address}/api/edit-task`,
+            'delete': `http://${config.address}/api/delete-task`,
+            'restart': `http://${config.address}/api/restart-task`,
+        }
     });
 };
 

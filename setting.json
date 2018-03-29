@@ -1,0 +1,27 @@
+{
+  "mailSetting": {
+    "host": "smtp.you.com",
+    "secureConnection": true,
+    "port": 465,
+    "auth": {
+      "user": "hello@you.com",
+      "pass": "password"
+    },
+    "from": "system@suck.com",
+    "to": "hello@mail.com,world@mail.com"
+  },
+  "webhook": "https://oapi.dingtalk.com/robot/send?access_token=16aa3423590fbaba0bd6a9f32074b5e141689b84801e4d122eb3f98ae0fd7beb",
+  "api": {
+    "secret": "hello-node-cron-totp-secret"
+  },
+  "mysql": {
+    "connectionLimit": 1,
+    "acquireTimeout": 3000,
+    "host": "127.0.0.1",
+    "port": 3306,
+    "user": "root",
+    "password": "agreement",
+    "database": "cron",
+    "multipleStatements": true
+  }
+}

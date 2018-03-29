@@ -14,6 +14,7 @@ let router = express.Router();
  * 登录状态监测
  */
 router.get('/', function (req, res, next) {
+    req.session = null;
     if (auth.loginAuthCheck(req.session)) {
         res.redirect('/dashboard');
     } else {

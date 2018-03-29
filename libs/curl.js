@@ -11,26 +11,7 @@ let config = require('../conf/config');
  * @param callback {function}
  */
 exports.send = function (args, callback) {
-    let options = {
-        url: null,
-        method: 'get',
-        header: null,//headers array
-        json: false,//method为post时body的形态
-        body: null,//method为post时的body
-        timeout: 5,//超时时间(单位:秒),<=0时不计算超时
-        debug: false
-    };
-
-    if (args && typeof args == 'object') {
-        for (let key in args) {
-            if (key == 'try')continue;
-            if (options.hasOwnProperty(key)) {
-                options[key] = args[key];
-            }
-        }
-    }
-
-    request(options, function (err, res, body) {
+    request(args, function (err, res, body) {
         if (err) {
             callback(err, err);
         } else if (res.statusCode != 200) {
@@ -91,7 +72,7 @@ exports.privateGet = function (url, data, callback) {
     let options = {
         url: url,
         method: 'get',
-        timeout: 5000,//超时时间(单位:秒),<=0时不计算超时
+        timeout: 3000,//超时时间(单位:秒),<=0时不计算超时
     };
 
     request(options, function (err, res, body) {

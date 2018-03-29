@@ -6,7 +6,6 @@ var cookieSession = require('cookie-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
 var login = require('./routes/login');
 var users = require('./routes/users');
 var api = require('./routes/api');
@@ -33,7 +32,8 @@ app.use(cookieSession({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+app.use('/', require('./routes/index'));
+app.use('/dashboard', require('./routes/dashboard'));
 app.use('/login', login);
 app.use('/users', users);
 app.use('/api', api);

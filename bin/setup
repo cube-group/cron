@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+let trace = require('../libs/trace');
+let async = require('async');
+let config = require('../conf/config');
+let db = require('../libs/db');
+let fs = require('fs');
+
+//read init sql
+let sqlString = fs.readFileSync(__dirname + '/../sql/create.sql');
+if (!sqlString) {
+    trace.error('sql/create.sql read error');
+    process.exit();
+}
+
+//read init engines
+let enginesJson = fs.readFileSync('./setting-engine.json');
+if (!enginesJson) {
+    trace.error('setting-engine.json read error');
+    process.exit();
+}
+
+let engines = JSON.parse(enginesJson);
+if (!engines) {
+    trace.error('enginesJson parse error');
+    process.exit();
+}
+
+//init db
+let sql = sqlString;
+sql += 'INSERT INTO c_task (`name`,`ip`,`iip`,`code`,`address`,`mail`) VALUES ';
+let values = [];
+let inserts = [];
+for (let key in engines) {
+    values.push(engines[key].name);
+    values.push(engines[key].ip);
+    values.push(engines[key].iip);
+    values.push(engines[key].code);
+    values.push(engines[key].address);
+    values.push(engines[key].mail);
+    inserts.push('(?,?,?,?,?,?)');
+}
+sql += inserts.join(',');
+db.exec(sql, values, function (err, rows, fields) {
+    if (err) {
+        trace.error(err.message);
+    }
+    process.exit();
+});
+
+
+
+

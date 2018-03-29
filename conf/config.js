@@ -9,6 +9,9 @@ let trace = require('../libs/trace');
 let utils = require('../libs/utils');
 let base32 = require('thirty-two');
 
+let settingJson = fs.readFileSync(__dirname + '/../setting.json');
+let setting = JSON.parse(settingJson);
+
 let mainConfig = {
     /**
      * version
@@ -38,30 +41,6 @@ let mainConfig = {
      * current task-engine mail alert team
      */
     mail: "",
-    //mail setting
-    mailSetting: {
-        host: "smtp.you.com",
-        secureConnection: true,
-        port: 465,
-        auth: {
-            user: 'hello@you.com',
-            pass: 'password'
-        },
-        from: 'system@fuck.com',
-        to: 'hello@mail.com,world@mail.com'
-    },
-    api: {
-        secret: 'hello-node-cron-totp-secret'
-    },
-    mysql: {
-        connectionLimit: 1,
-        acquireTimeout: 3000,
-        host: "127.0.0.1",
-        port: 3306,
-        user: "root",
-        password: "agreement",
-        database: "cron"
-    },
     //current task-engine's absolute network ip
     ip: null,
     //current task-engine's inner network ip
@@ -74,6 +53,14 @@ let mainConfig = {
     //current task-engine is master-engine or not.
     //master-engine can show all the task-engines.
     master: true,
+    //mail alert setting
+    mailSetting: setting.mailSetting,
+    //web hook alert setting
+    webhook: setting.webhook,
+    //totp secret setting
+    api: setting.api,
+    //mysql connection setting
+    mysql: setting.mysql,
 };
 
 //argv arguments
