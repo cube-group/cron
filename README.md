@@ -4,11 +4,10 @@
 * npm must
 ### How to use it?
 ```
-#install node.js
 git clone git@github.com:cube-group/cron.git
 cd cron && node bin/task -h
 ```
-then as
+then as you can see
 ```
 Usage: task [options]
 
@@ -41,7 +40,7 @@ Usage: task [options]
                 task --version
 
 ```
-### init db
+### See the config
 setting.json
 ```
 {
@@ -93,6 +92,11 @@ init cron engine setting
   }
 ]
 ```
+### How to setup cron-egine?
+init db setting, and see the setting.json's mysql
+```
+cd cron && node bin/setup
+```
 ### How to login cron-engine？
 1.use the google auth app!see the setting.json's api.secret
 2.how to get the google auth url?
@@ -101,8 +105,4 @@ cd cron && node bin/task -t
 ```
 ![](https://github.com/cube-group/cron/blob/master/public/images/login.png)
 ### How to use cron-engine?
-init db setting, and see the setting.json's mysql
-```
-cd cron && node bin/setup
-```
 ![](https://github.com/cube-group/cron/blob/master/public/images/dashboard.png)
