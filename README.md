@@ -99,10 +99,10 @@ init cron engine setting
 ```
 cd cron && node bin/task -t
 ```
-![](https://github.com/cube-group/cron/blob/master/images/login.png)
+![](https://github.com/cube-group/cron/blob/master/public/images/login.png)
 ### How to use cron-engine?
 init db setting, and see the setting.json's mysql
 ```
 cd cron && node bin/setup
 ```
-![](https://github.com/cube-group/cron/blob/master/images/dashboard.png)
+![](https://github.com/cube-group/cron/blob/master/public/images/dashboard.png)
