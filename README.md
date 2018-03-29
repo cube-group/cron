@@ -117,9 +117,10 @@ init db setting, and see the setting.json's mysql
 cd cron && node bin/setup
 ```
 ### How to login cron-engine？
-1.use the google auth app!see the setting.json's api.secret
-2.how to get the google auth url?
+1. use the google auth app!see the setting.json's api.secret
+2. how to get the google auth url?
 ```
 cd cron && node bin/task -t
+#会立马输出标准google auth url然后使用app进行设置即可
 ```
 ![](https://github.com/cube-group/cron/blob/master/public/images/login.png)
