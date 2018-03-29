@@ -12,46 +12,72 @@ let model = require('./task');
 let curl = require('../libs/curl');
 
 /**
- * master Mode
- * 获取其它节点的信息
+ * master mode
+ * 获取其它engine节点的info
  * @param tid
+ * @param callback
  */
-exports.info = function (tid) {
+exports.info = function (tid, callback) {
     async.auto({
+        //获取engine列表
         getList: function (callback) {
             model.getTaskList(function (err, rows) {
                 callback(err, err ? err.message : rows);
             });
         },
-        getData: function (callback, results) {
+        //获取目标engine的info
+        getData: ['getList', function (result, callback) {
             let address = '';
-            for (let key in results.getList) {
-                if (results.getList[key].id = tid) {
-                    address = results.getList[key].address;
+            for (let key in result.getList) {
+                if (result.getList[key].id == tid) {
+                    address = result.getList[key].address;
+                    break;
                 }
             }
             if (!address) {
                 callback('err', 'not found address');
                 return;
             }
-            curl.privateGet(`http://${tid}/api/info`, {}, function (err, data) {
+            curl.privateGet(`http://${address}/api/info`, {}, function (err, data) {
                 callback(err, err ? err.message : data);
             });
-        }
+        }]
     }, function (err, results) {
-        return {
-            'engines': [{
-                'name': config.address,
-                'url': `http://${config.address}/dashboard?tid=${config.tid}`,
-                'active': 'active'
-            }],
-            'period': server.period(),
-            'list': server.getList(),
-            'cpu': utils.getCpuPercent(),
-            'mem': utils.getMemPercent(),
-            'status': server.getCronStatus(),
-            'info': config,
-            'count': server.getCount()
-        };
+        let engines = [];
+        let currentEngine = null;
+        if (results.getList) {
+            for (let key in results.getList) {
+                let item = results.getList[key];
+                let engine = {
+                    'name': item.address,
+                    'url': `http://${config.address}/dashboard?tid=${item.id}`,
+                    'active': ''
+                };
+                if (item.id == tid) {
+                    engine.active = 'active';
+                    currentEngine = item;
+                }
+                engines.push(engine);
+            }
+        }
+
+        if (err) {
+            callback(null, {
+                'err': true,
+                'engines': engines,
+                'period': {},
+                'list': [],
+                'cpu': 'NaN',
+                'mem': 'NaN',
+                'status': 'NaN',
+                'info': {'address': currentEngine.address, 'name': currentEngine.name},
+                'count': 0
+            });
+            return;
+        }
+        let data = results.getData.data;
+        data.engines = engines;
+        console.log(data);
+        callback(null, data);
     });
 };

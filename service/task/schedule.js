@@ -85,9 +85,9 @@ function MySchedule(tid, mailto, data) {
         if (!execInstance) {
             executeStatus(true);
             if (data.type) {
-                execInstance = new exec.Shell();
-            } else {
                 execInstance = new exec.Curl();
+            } else {
+                execInstance = new exec.Shell();
             }
             execInstance.exec(data.value, function (err, data) {
                 executeStatus(false);

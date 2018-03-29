@@ -1,4 +1,5 @@
 let server = require('../service/task/server');
+let config = require('../conf/config');
 let apiModel = require('../models/api');
 let masterModel = require('../models/master');
 let express = require('express');
@@ -16,11 +17,15 @@ router.get('/', function (req, res, next) {
 
 /* GET home page. */
 router.get('/dashboard', function (req, res, next) {
-    if (req.query.tid && req.query.tid != config.tid) {
-        res.render('index', masterModel.info());
-    } else {
-        res.render('index', apiModel.info());
-    }
+    let model = config.master ? masterModel : apiModel;
+    let tid = req.query.tid ? req.query.tid : config.tid;
+    model.info(tid, function (err, result) {
+        if (err) {
+            res.render('index', {});
+        } else {
+            res.render('index', result);
+        }
+    });
 });
 
 module.exports = router;

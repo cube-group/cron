@@ -91,11 +91,7 @@ exports.privateGet = function (url, data, callback) {
     let options = {
         url: url,
         method: 'get',
-        header: null,//headers array
-        json: true,//method为post时body的形态
-        body: data,//method为post时的body
-        timeout: 5,//超时时间(单位:秒),<=0时不计算超时
-        debug: false
+        timeout: 5000,//超时时间(单位:秒),<=0时不计算超时
     };
 
     request(options, function (err, res, body) {
@@ -104,9 +100,8 @@ exports.privateGet = function (url, data, callback) {
         } else if (res.statusCode != 200) {
             callback('err', res.statusCode);
         } else {
-            callback(null, body);
+            let rt = JSON.parse(body);
+            callback(null, rt);
         }
     });
 };
-
-exports.send = send;

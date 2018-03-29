@@ -10,11 +10,12 @@ let sqls = require('../conf/sqls');
 let db = require('../libs/db');
 
 /**
- * 获取任务列表和本机信息.
- * @return {array}|{bool}
+ * 获取本机info
+ * @param args
+ * @param callback
  */
-exports.info = function () {
-    return {
+exports.info = function (args, callback) {
+    callback(null, {
         'engines': [{
             'name': config.address,
             'url': `http://${config.address}/dashboard?tid=${config.tid}`,
@@ -26,8 +27,9 @@ exports.info = function () {
         'mem': utils.getMemPercent(),
         'status': server.getCronStatus(),
         'info': config,
-        'count': server.getCount()
-    };
+        'count': server.getCount(),
+        'err': false
+    });
 };
 
 /**

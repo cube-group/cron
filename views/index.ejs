@@ -40,8 +40,7 @@
                                     class="lnr lnr-question-circle"></i> <span>Help</span> <i
                                     class="icon-submenu lnr lnr-chevron-down"></i></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">How To Use</a></li>
-                            <li><a href="#">How To Setup the code</a></li>
+                            <li><a href="#">GitHub Help</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -155,10 +154,12 @@
                                         <span class="panel-title">Current Task-Engine Cron List(Total: <%= count %>
                                             )</span>
                                     </div>
+                                    <% if(!err){ %>
                                     <div class="col-md-6 text-right">
                                         <a class="btn btn-primary" onclick="onTaskAdd()">Add</a>
                                         <a class="btn btn-danger" onclick="onTaskRestartAll()">Restart</a>
                                     </div>
+                                    <% } %>
                                 </div>
                             </div>
                             <div class="panel-body no-padding">

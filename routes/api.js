@@ -32,7 +32,9 @@ router.get('/', function (req, res, next) {
  * 返回任务机相关执行信息.
  */
 router.get('/info', function (req, res, next) {
-    output.echo(res, api.info(), 'success');
+    api.info(null, function (err, result) {
+        output.echo(res, result, 'success');
+    });
 });
 
 /**

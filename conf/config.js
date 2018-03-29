@@ -73,7 +73,7 @@ let mainConfig = {
     code: null,
     //current task-engine is master-engine or not.
     //master-engine can show all the task-engines.
-    master: false,
+    master: true,
 };
 
 //argv arguments
@@ -104,7 +104,14 @@ argv.option([
         short: 't',
         type: 'boolean',
         description: '获取google auth url',
-        example: "'node bin/task -totp=secret'"
+        example: "'node bin/task -t=secret'"
+    },
+    {
+        name: 'master',
+        short: 'm',
+        type: 'int',
+        description: '是否为master mode',
+        example: "'node bin/task -m=1'"
     },
 ]);
 
@@ -129,11 +136,11 @@ if (options.master) {
 }
 if (options.totp) {
     // encoded will be the secret key, base32 encoded
-    var encoded = base32.encode(mainConfig.api.secret);
+    let encoded = base32.encode(mainConfig.api.secret);
     // Google authenticator doesn't like equal signs
-    var encodedForGoogle = encoded.toString().replace(/=/g, '');
+    let encodedForGoogle = encoded.toString().replace(/=/g, '');
     // to create a URI for a qr code (change totp to hotp is using hotp)
-    var uri = 'otpauth://totp/cron-engine?secret=' + encodedForGoogle;
+    let uri = 'otpauth://totp/cron-engine?secret=' + encodedForGoogle;
     console.log(uri);
     process.exit();
 }
