@@ -46,6 +46,19 @@ Usage: task [options]
                 task --version
 
 ```
+当你在一个node节点机上启动cron-engine，你需要执行如下
+```
+#以外网ip唯一设置
+cd cron && node bin/task -ip=x.x.x.x
+#以内网ip唯一设置
+cd cron && node bin/task -iip=x.x.x.x
+#以唯一编号code设置
+cd cron && node bin/task -c=unique
+```
+如果想以master模式运行(可以管理所有配置的cron-engine节点）
+```
+cd cron && node bin/task -m
+```
 ### See the config
 setting.json is the config about mail/webhook/totp-secret/mysql
 ```
