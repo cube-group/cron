@@ -41,7 +41,7 @@ Usage: task [options]
 
 ```
 ### See the config
-setting.json
+setting.json is the config about mail/webhook/totp-secret/mysql
 ```
 {
   "mailSetting": {
