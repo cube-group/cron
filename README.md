@@ -2,6 +2,9 @@
 ### Base Node.js
 * node must
 * npm must
+* support crontab time format ,such as `* * * * * *`
+* exact to second level
+* support crontab shell and url-get
 * fast build your crontab dashboard install of linux crontab -e
 * crontab? fuck that!
 ![](https://github.com/cube-group/cron/blob/master/public/images/dashboard.png)
