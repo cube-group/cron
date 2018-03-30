@@ -45,7 +45,7 @@ cd cron && npm install --registry=https://registry.npm.taobao.org
   }
 }
 ```
-* cron-engine web-server服务端口
+* port - cron-engine web-server服务端口
 * mailSetting - 报警邮件配置项
 * webhook - 钉钉群报警机器人webhook
 * api - secret最终会用于生成登录时所需要的google-auth-url
