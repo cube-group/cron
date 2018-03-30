@@ -1,7 +1,7 @@
 # Cron Engine
 ### 基于Node.js
 * node ^8.0.0
-* npm ^5.
+* npm ^5.6
 * 代替你的crontab,轻松监控(邮件和钉钉webhook机器人报警)
 * 精确至秒级(秒 分 时 日 月 周)
 * 支持定时shell和定时url-get两种任务方式
