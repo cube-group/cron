@@ -2,17 +2,13 @@
 CREATE TABLE IF NOT EXISTS `c_task` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL COMMENT '任务机名称',
-  `address` varchar(100) NOT NULL DEFAULT '' COMMENT '该任务机地址，例如：127.0.0.1:3000',
   `ip` varchar(45) NOT NULL COMMENT '任务机外网ip',
-  `iip` varchar(45) NOT NULL COMMENT '任务机内网ip',
   `code` varchar(45) NOT NULL COMMENT '任务机标号',
   `mail` varchar(500) DEFAULT NULL COMMENT '该任务机任务报警接收邮件组',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_name` (`name`),
-  UNIQUE KEY `unique_address` (`address`),
   UNIQUE KEY `unique_ip` (`ip`),
-  UNIQUE KEY `unique_iip` (`iip`),
   UNIQUE KEY `unique_code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

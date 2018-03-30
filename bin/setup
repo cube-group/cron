@@ -1,4 +1,8 @@
 #!/usr/bin/env node
+
+/**
+ * setup mysql and setting
+ */
 let trace = require('../libs/trace');
 let async = require('async');
 let config = require('../conf/config');
@@ -27,22 +31,23 @@ if (!engines) {
 
 //init db
 let sql = sqlString;
-sql += 'INSERT INTO c_task (`name`,`ip`,`iip`,`code`,`address`,`mail`) VALUES ';
+sql += 'INSERT INTO c_task (`name`,`ip`,`code`,`mail`) VALUES ';
 let values = [];
 let inserts = [];
 for (let key in engines) {
     values.push(engines[key].name);
     values.push(engines[key].ip);
-    values.push(engines[key].iip);
     values.push(engines[key].code);
-    values.push(engines[key].address);
     values.push(engines[key].mail);
-    inserts.push('(?,?,?,?,?,?)');
+    inserts.push('(?,?,?,?)');
 }
 sql += inserts.join(',');
+console.log(sql);
 db.exec(sql, values, function (err, rows, fields) {
     if (err) {
-        trace.error(err.message);
+        trace.error('setup error', err.message);
+    } else {
+        trace.log('setup success');
     }
     process.exit();
 });

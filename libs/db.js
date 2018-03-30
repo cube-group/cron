@@ -1,11 +1,10 @@
 /**
  * Created by linyang on 17/3/3.
  */
-var mysql = require('mysql');
-var trace = require('../libs/trace');
-var config = require('../conf/config');
-var pool = mysql.createPool(config.mysql);
-
+let mysql = require('mysql');
+let trace = require('../libs/trace');
+let config = require('../conf/config');
+let pool = mysql.createPool(config.mysql);
 
 /**
  * 执行sql
@@ -37,6 +36,6 @@ exports.exec = function (sql, values, callback) {
             connection.release();
             callback(err, rows, fields);
         });
-        trace.log(query.sql);
+        // trace.log(query.sql);
     });
 };

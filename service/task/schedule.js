@@ -2,9 +2,9 @@
  * Created by linyang on 17/3/3.
  * 核心任务单元
  */
+let trace = require('../../libs/trace');
 let nodeCron = require('node-cron');
 let mail = require('../../libs/mail');
-let trace = require('../../libs/trace');
 let exec = require('./exec');
 let curl = require('../../libs/curl');
 let config = require('../../conf/config');
@@ -22,6 +22,8 @@ function MySchedule(tid, mailto, data) {
         return null;
     }
 
+    //scheduler
+    let job = null;
     //执行实例.
     let execInstance = null;
     //当前执行的错误次数.
@@ -68,7 +70,6 @@ function MySchedule(tid, mailto, data) {
                 body: JSON.stringify(contentBody),//method为post时的body
                 timeout: 2000,//超时时间(单位:秒),<=0时不计算超时
             };
-            console.log(options);
             curl.send(options, function (err) {
                 console.log(err ? err.message : null);
             });
@@ -96,10 +97,9 @@ function MySchedule(tid, mailto, data) {
         }
     }
 
-    //启动schedule
-    //同时只允许有一个shell或http命令在执行.
-    //防止多个shell或http命令让系统挂掉.
-    let job = nodeCron.schedule(data.time, function () {
+    //启动
+    function scheduleExec() {
+
         if (!execInstance) {
             executeStatus(true);
             if (data.type) {
@@ -117,7 +117,7 @@ function MySchedule(tid, mailto, data) {
                 }
             });
         }
-    }, true);
+    }
 
     /**
      * 停止cron
@@ -205,6 +205,15 @@ function MySchedule(tid, mailto, data) {
             averageTime: averageUseTime + 'ms'
         };
     };
+
+    //启动schedule
+    //同时只允许有一个shell或http命令在执行.
+    try {
+        job = nodeCron.schedule(data.time, scheduleExec, true);
+    } catch (e) {
+        trace.error(`[schedule error] ${e.message}`);
+        this.stop();
+    }
 }
 
 module.exports = MySchedule;

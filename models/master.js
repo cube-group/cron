@@ -30,7 +30,7 @@ exports.info = function (tid, callback) {
             let address = '';
             for (let key in result.getList) {
                 if (result.getList[key].id == tid) {
-                    address = result.getList[key].address;
+                    address = result.getList[key].ip + ':' + config.port;
                     break;
                 }
             }
@@ -49,8 +49,8 @@ exports.info = function (tid, callback) {
             for (let key in results.getList) {
                 let item = results.getList[key];
                 let engine = {
-                    'name': item.address,
-                    'url': `http://${config.address}/dashboard?tid=${item.id}`,
+                    'name': `${item.ip}:${config.port}`,
+                    'url': `/dashboard?tid=${item.id}`,
                     'active': ''
                 };
                 if (item.id == tid) {
@@ -84,10 +84,10 @@ exports.info = function (tid, callback) {
         let data = results.getData.data;
         data.engines = engines;
         data['apis'] = {
-            'add': `http://${currentEngine.address}/api/add-task`,
-            'edit': `http://${currentEngine.address}/api/edit-task`,
-            'delete': `http://${currentEngine.address}/api/delete-task`,
-            'restart': `http://${currentEngine.address}/api/restart-task`,
+            'add': `http://${currentEngine.ip}:${config.port}/api/add-task`,
+            'edit': `http://${currentEngine.ip}:${config.port}/api/edit-task`,
+            'delete': `http://${currentEngine.ip}:${config.port}/api/delete-task`,
+            'restart': `http://${currentEngine.ip}:${config.port}/api/restart-task`,
         };
         console.log(data);
         callback(null, data);

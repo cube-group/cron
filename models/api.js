@@ -89,6 +89,11 @@ exports.addTask = function (data, callback) {
  * @param callback
  */
 exports.editTask = function (data, callback) {
+    if (!data.comment || !data.time || !data.value || !data.id) {
+        callback({'message': 'params err'}, 0);
+        return;
+    }
+    data.time = data.time.trim();
     db.exec(sqls.UPDATE_TASK, [data.comment, data.time, data.value, data.mail, data.type, data.id], function (err, rows, fields) {
         if (err) {
             callback(err);

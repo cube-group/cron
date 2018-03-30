@@ -1,4 +1,5 @@
 {
+  "port": 3000,
   "mailSetting": {
     "host": "smtp.you.com",
     "secureConnection": true,
@@ -10,7 +11,7 @@
     "from": "system@suck.com",
     "to": "hello@mail.com,world@mail.com"
   },
-  "webhook": "https://oapi.dingtalk.com/robot/send?access_token=16aa3423590fbaba0bd6a9f32074b5e141689b84801e4d122eb3f98ae0fd7beb",
+  "webhook": "dingding-webhook",
   "api": {
     "secret": "hello-node-cron-totp-secret"
   },

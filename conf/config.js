@@ -20,11 +20,11 @@ let mainConfig = {
     /**
      * current task-engine name
      */
-    name: null,
+    name: '',
     /**
      * web server port
      */
-    port: 3000,
+    port: setting.port ? setting.port : 3000,
     /**
      * local server address
      */
@@ -40,19 +40,17 @@ let mainConfig = {
     /**
      * current task-engine mail alert team
      */
-    mail: "",
+    mail: '',
     //current task-engine's absolute network ip
-    ip: null,
-    //current task-engine's inner network ip
-    iip: null,
+    ip: '',
     //current task-engine's code
     //when the ip or iip is not confirmed , you should run the task witch code
     //example: node bin/task -c code.
     //the code should must be unique.
-    code: null,
+    code: '',
     //current task-engine is master-engine or not.
     //master-engine can show all the task-engines.
-    master: true,
+    master: false,
     //mail alert setting
     mailSetting: setting.mailSetting,
     //web hook alert setting
@@ -76,28 +74,21 @@ argv.option([
         name: 'ip',
         short: 'ip',
         type: 'string',
-        description: '设置外网ip',
+        description: '设置外网ip（可选）',
         example: "'node bin/task -ip=127.0.0.1'"
-    },
-    {
-        name: 'iip',
-        short: 'iip',
-        type: 'string',
-        description: '设置内网ip',
-        example: "'node bin/task -iip=127.0.0.1'"
     },
     {
         name: 'totp',
         short: 't',
         type: 'boolean',
         description: '获取google auth url',
-        example: "'node bin/task -t=secret'"
+        example: "'node bin/task -t'"
     },
     {
         name: 'master',
         short: 'm',
-        type: 'int',
-        description: '是否为master mode',
+        type: 'boolean',
+        description: '以master管理模式启动',
         example: "'node bin/task -m=1'"
     },
 ]);
@@ -112,11 +103,6 @@ if (options.ip) {
     mainConfig.ip = options.ip;
 } else {
     mainConfig.ip = utils.getAbsoluteIPAddress();
-}
-if (options.iip) {
-    mainConfig.iip = options.iip;
-} else {
-    mainConfig.iip = utils.getInnerIPAddress();
 }
 if (options.master) {
     mainConfig.master = true;

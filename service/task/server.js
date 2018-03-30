@@ -28,8 +28,8 @@ function newTask(data) {
         if (tasks[data.id]) {
             tasks[data.id].stop();
         }
-        tasks[data.id] = new Schedule(config.tid, config.mail, data);
         trace.log('[Create Task]', data.time, data.value);
+        tasks[data.id] = new Schedule(config.tid, config.mail, data);
     }
 }
 
@@ -40,11 +40,11 @@ function newTask(data) {
 function newTasks(results) {
     tasks = {};
     let count = 0;
+    trace.log('task-total Number', results.length);
     for (let i = 0; i < results.length; i++) {
         newTask(results[i]);
         count++;
     }
-    trace.log('task-total Number', count);
 }
 
 /**

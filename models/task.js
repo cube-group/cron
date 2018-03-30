@@ -11,16 +11,16 @@ let db = require('../libs/db');
  * @param callback
  */
 exports.getTaskServerInfo = function (callback) {
-    let sqlValues = [config.ip, config.iip, config.code];
+    let sqlValues = [config.ip, config.code];
 
     db.exec(sqls.SELECT_TASK_ENGINE, sqlValues, function (err, rows, fields) {
         if (err || !rows.length) {
             callback(err ? err : 'err');
         } else {
             let row = rows[0];
-            config.port = parseInt(row.address.split(':')[1]);
+            config.ip = row.ip;
             config.name = row.name;
-            config.address = row.address;
+            config.address = `${row.ip}:${config.port}`;
             config.tid = row.id;
             config.mail = row.mail;
 
