@@ -89,7 +89,7 @@ argv.option([
         short: 'm',
         type: 'boolean',
         description: '以master管理模式启动',
-        example: "'node bin/task -m=1'"
+        example: "'node bin/task -m'"
     },
 ]);
 

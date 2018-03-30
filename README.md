@@ -100,7 +100,7 @@ cd cron && node bin/task -h
 
         --master, -m
                 以master管理模式启动
-                'node bin/task -m=1'
+                'node bin/task -m'
 
         --version
                 Displays version info
