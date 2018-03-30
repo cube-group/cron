@@ -9,12 +9,12 @@
 
 ![](https://github.com/cube-group/cron/blob/master/public/images/dashboard.png)
 ### 安装
--github下载项目
+github下载项目
 ```
 git clone git@github.com:cube-group/cron.git
-cd cron && vim setting.json
+cd cron && npm install --registry=https://registry.npm.taobao.org
 ```
--修改setting.json配置文件
+修改cron/setting.json配置文件
 ```
 {
   "port": 3000,
@@ -51,12 +51,12 @@ cd cron && vim setting.json
 * api - secret最终会用于生成登录时所需要的google-auth-url
 * mysql - 数据库配置项
 
--修改setting-engine.json配置文件
+修改cron/setting-engine.json配置文件
 ```
 [
   {
     "name": "hello",//engine名称
-    "ip": "127.0.0.1",//外网ip(用于mysql中定位)
+    "ip": "127.0.0.1",//唯一外网ip(用于mysql中定位)
     "code": "hello",//唯一编号(用于mysql中定位)
     "mail": "lin2798003@sina.com"//报警邮件组
   },
@@ -70,7 +70,7 @@ cd cron && vim setting.json
 ```
 注: 当前engine版本暂时不支持master管理模式下的动态增删改engine列表
 
--安装
+执行数据库初始化安装(该命令仅执行一次即可）
 ```
 cd cron && node bin/setup
 ```
